@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STELLAR MIND // 虞兮叹 · 全屏 3D 星空 AI 知识库与数字大脑</title>
+
+  <script>
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      var errDiv = document.getElementById('debug-error-box');
+      if (!errDiv) {
+        errDiv = document.createElement('div');
+        errDiv.id = 'debug-error-box';
+        errDiv.style.cssText = 'position:fixed; bottom:0; left:0; width:100%; z-index:99999; background:rgba(220,38,38,0.95); color:#fff; padding:12px 20px; font-family:monospace; font-size:12px; max-height:150px; overflow-y:auto; border-top:2px solid #ef4444;';
+        document.body ? document.body.appendChild(errDiv) : window.addEventListener('DOMContentLoaded', () => document.body.appendChild(errDiv));
+      }
+      errDiv.innerHTML += '<div>❌ [JS Error] ' + msg + ' (line ' + lineNo + ')</div>';
+      return false;
+    };
+  </script>
+  <meta name="description" content="虞兮叹的个人 3D 数字星空知识库：全屏沉浸式 3D 星图、Multi-Agent 协同范式、RAG 防幻觉架构、AI 训练师 SOP、2026 大模型八股与骑行摄影作品集。">
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+SC:wght@600;700;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Local Dependencies: Three.js + OrbitControls -->
+  <script src="js/lib/three.min.js"></script>
+  <script src="js/lib/OrbitControls.js"></script>
+
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css?v=5.0.0">
+  <link rel="stylesheet" href="css/glass.css?v=5.0.0">
+</head>
+<body class="fullscreen-body">
+
+  <!-- Aurora Background Glow Orbs -->
+  <div class="aurora-glow aurora-glow-1"></div>
+  <div class="aurora-glow aurora-glow-2"></div>
+  <div class="aurora-glow aurora-glow-3"></div>
+
+  <!-- 100% Fullscreen 3D WebGL Canvas -->
+  <div id="cosmos-canvas-container"></div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Top Floating Header Bar -->
+  <header class="top-header glass-panel interactive">
+    <a class="brand-logo" onclick="window.CosmosEngine.resetCamera();">
+      <div class="logo-orb"></div>
+      <div class="brand-text">
+        <span class="brand-name">STELLAR MIND</span>
+        <span class="brand-tagline">虞兮叹 // 3D AI 知识库 & 数字大脑</span>
+      </div>
+    </a>
+
+    <div class="header-center-pills">
+      <nav id="nav-categories" class="nav-categories"></nav>
+    </div>
+
+    <div class="header-actions">
+      <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="global-search" class="search-input" placeholder="搜索 AI 架构、SOP 与知识点...">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+
+      <button onclick="window.UIModule.openPulseModal()" class="admin-toggle-btn" style="background:rgba(251,191,36,0.15); border-color:rgba(251,191,36,0.4); color:#fbbf24;">
+        <i class="fa-solid fa-bolt"></i>
+        <span>每日 AI 脉冲</span>
+      </button>
+
+      <button id="btn-toggle-admin" class="admin-toggle-btn">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>审核后台</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Floating Navigation Dock at Bottom -->
+  <div class="floating-bottom-dock glass-panel interactive">
+    <button class="dock-btn active" onclick="window.CosmosEngine.resetCamera();" title="重置 3D 全景视角">
+      <i class="fa-solid fa-globe"></i> <span>全景视角</span>
+    </button>
+    <button class="dock-btn" onclick="window.UIModule.openPulseModal();" title="每日 AI 行业脉冲">
+      <i class="fa-solid fa-bolt" style="color:var(--accent-amber);"></i> <span>每日 AI 脉冲</span>
+    </button>
+    <button class="dock-btn" onclick="window.CosmosEngine.flyToPlanetById('node-trainer-stage1');" title="AI 训练师体系">
+      <i class="fa-solid fa-graduation-cap" style="color:var(--accent-amber);"></i> <span>训练师体系</span>
+    </button>
+    <button class="dock-btn" onclick="window.CosmosEngine.flyToPlanetById('node-agent-multi');" title="Multi-Agent 范式">
+      <i class="fa-solid fa-robot"></i> <span>Multi-Agent</span>
+    </button>
+    <button class="dock-btn" onclick="window.CosmosEngine.flyToPlanetById('node-rag-advanced');" title="RAG 防幻觉">
+      <i class="fa-solid fa-shield-halved"></i> <span>RAG 防幻觉</span>
+    </button>
+    <button class="dock-btn" onclick="window.CosmosEngine.flyToPlanetById('node-llm-interview-2026');" title="2026 大模型八股">
+      <i class="fa-solid fa-fire"></i> <span>2026 八股</span>
+    </button>
+    <button class="dock-btn" onclick="window.CosmosEngine.flyToPlanetById('node-portfolio-commercial');" title="20+ 商业标注交付作品">
+      <i class="fa-solid fa-briefcase" style="color:var(--accent-sky);"></i> <span>标注作品集</span>
+    </button>
+    <button class="dock-btn" onclick="window.CosmosEngine.flyToPlanetById('node-gallery');" title="骑行相册与风光">
+      <i class="fa-solid fa-camera"></i> <span>骑行相册</span>
+    </button>
+  </div>
+
+  <!-- Daily Industry Pulse News Modal Drawer -->
+  <div id="pulse-drawer-modal" class="detail-modal glass-panel glass-panel-glow" style="max-width: 820px;">
+    <div class="modal-header">
+      <div>
+        <span class="badge badge-amber"><i class="fa-solid fa-bolt"></i> DAILY AI NEWS STREAM</span>
+        <h2 class="modal-title">⚡ 每日 AI 行业脉冲与 Agent 抓取</h2>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button id="btn-trigger-ai-crawl" class="btn-primary" style="padding:6px 16px; font-size:0.8rem;">
+          <i class="fa-solid fa-robot"></i> 启动 Agent 全网检索
+        </button>
+        <button class="modal-close" onclick="window.UIModule.closePulseModal()" title="关闭">✕</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:16px;">
+        每日实时搜集全网前沿 AI 动态、大模型突破与 Agent 工具发布，结合虞兮叹独家视点与 Impact 评分。
+      </p>
+      <div id="pulse-list-container" class="pulse-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="cat-btn" onclick="window.UIModule.closePulseModal()">关闭脉冲视界</button>
+      <span style="font-size:0.8rem; color:var(--text-dim);">自动更新于每日 08:00 AM</span>
+    </div>
+  </div>
+
+  <!-- Planet / Knowledge Detail Reading Drawer Modal -->
+  <div id="planet-detail-modal" class="detail-modal glass-panel glass-panel-glow">
+    <div class="modal-header">
+      <div>
+        <span class="badge badge-cyan modal-category-badge">AI 专区</span>
+        <h2 class="modal-title">节点标题</h2>
+      </div>
+      <button class="modal-close" onclick="window.UIModule.closePlanetModal()" title="关闭视界">✕</button>
+    </div>
+    <div class="modal-body"></div>
+    <div class="modal-footer">
+      <button class="cat-btn" onclick="window.UIModule.closePlanetModal()">关闭视界</button>
+      <button class="btn-primary" onclick="window.UIModule.openBookingModal('1v1 AI 架构落地深度咨询')">
+        <i class="fa-solid fa-calendar-check"></i> 预约 1v1 AI 深度咨询
+      </button>
+    </div>
+  </div>
+
+  <!-- Fullscreen Photo Lightbox Modal -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <button class="lightbox-close" onclick="window.UIModule.closeLightbox()">✕</button>
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" alt="Full Photo" />
+      <div id="lightbox-caption" class="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <!-- Floating AI Persona Chat Widget -->
+  <div id="ai-chat-trigger" class="ai-chat-trigger">
+    <div class="trigger-avatar">🤖</div>
+    <span>咨询 虞兮叹 AI 分身</span>
+    <div class="status-dot"></div>
+  </div>
+
+  <div id="ai-chat-window" class="ai-chat-window glass-panel glass-panel-glow">
+    <div class="widget-header chat-header">
+      <div class="widget-title">
+        <i class="fa-solid fa-sparkles" style="color:var(--accent-purple);"></i>
+        <span>虞兮叹 的 AI 咨询分身</span>
+      </div>
+      <button id="ai-chat-close" class="modal-close">✕</button>
+    </div>
+    
+    <div id="chat-messages-list" class="chat-messages">
+      <div class="chat-bubble chat-bubble-ai">
+        你好！我是虞兮叹的数字 AI 分身。欢迎探讨大模型架构落地、RAG 优化与 Multi-Agent 范式。你可以点击下方热门问题或直接提问！
+      </div>
+    </div>
+
+    <div id="chat-quick-questions" class="chat-quick-wrapper"></div>
+
+    <div class="chat-input-area">
+      <input type="text" id="chat-input-field" class="chat-input" placeholder="向 AI 分身提问或咨询..." />
+      <button id="chat-send-btn" class="btn-primary btn-send">发送</button>
+    </div>
+  </div>
+
+  <!-- Custom JavaScript Modules -->
+  <script src="js/config.js?v=8.0.0"></script>
+  <script src="js/cosmos3d.js?v=8.0.0"></script>
+  <script src="js/ui.js?v=8.0.0"></script>
+  <script src="js/pulse.js?v=8.0.0"></script>
+  <script src="js/ai-consultant.js?v=8.0.0"></script>
+  <script src="js/app.js?v=8.0.0"></script>
+</body>
+</html>

@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI训练师最后一课 · 全流程复盘与面试实战</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --sidebar-bg: #f7f7f7;
+  --sidebar-width: 260px;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666;
+  --text-muted: #999;
+  --accent: #1456f0;
+  --accent-light: #e8eeff;
+  --border: #e8e8e8;
+  --hover: #f0f0f0;
+  --tip-bg: #f0f9eb;    --tip-border: #67c23a;
+  --warn-bg: #fdf6ec;   --warn-border: #e6a23c;
+  --info-bg: #ecf5ff;   --info-border: #409eff;
+  --danger-bg: #fef0f0; --danger-border: #f56c6c;
+  --tag-blue: #e8f3ff;     --tag-blue-text: #1456f0;
+  --tag-green: #e8f9ef;    --tag-green-text: #27a75f;
+  --tag-orange: #fff4e6;   --tag-orange-text: #d97706;
+  --tag-pink: #fce8f3;     --tag-pink-text: #c2185b;
+  --tag-purple: #f3eeff;   --tag-purple-text: #7c3aed;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans SC', -apple-system, sans-serif;
+  background: var(--bg); color: var(--text-primary);
+  display: flex; min-height: 100vh; font-size: 14px; line-height: 1.7;
+}
+#sidebar {
+  width: var(--sidebar-width); min-width: var(--sidebar-width);
+  background: var(--sidebar-bg); border-right: 1px solid var(--border);
+  height: 100vh; position: sticky; top: 0; overflow-y: auto;
+  padding: 20px 0 40px; font-size: 13px;
+}
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+.sidebar-title { font-size: 12px; font-weight: 600; color: var(--text-muted); padding: 0 16px 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+.sidebar-nav a { display: block; padding: 4px 16px; color: var(--text-secondary); text-decoration: none; border-radius: 4px; margin: 1px 6px; transition: background 0.15s, color 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-nav a:hover { background: var(--hover); color: var(--text-primary); }
+.sidebar-nav a.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+.nav-h1 { font-weight: 600; font-size: 13px; margin-top: 12px; color: var(--text-primary) !important; }
+.nav-h2 { padding-left: 28px !important; font-size: 12.5px; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 10px 16px; }
+#main { flex: 1; max-width: 820px; margin: 0 auto; padding: 60px 60px 120px; }
+.doc-header { margin-bottom: 36px; }
+.doc-date { font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; letter-spacing: -0.5px; }
+.doc-meta { display: flex; align-items: center; gap: 12px; color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+.avatar { width: 24px; height: 24px; border-radius: 50%; background: #1456f0; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.summary-box { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; color: var(--text-secondary); font-size: 13.5px; line-height: 1.6; margin-bottom: 40px; }
+h1 { font-size: 28px; font-weight: 700; margin: 48px 0 16px; }
+h2 { font-size: 20px; font-weight: 600; margin: 36px 0 12px; }
+h3 { font-size: 16px; font-weight: 600; margin: 24px 0 10px; }
+h4 { font-size: 14px; font-weight: 600; margin: 16px 0 8px; color: var(--text-secondary); }
+p { margin-bottom: 12px; }
+ul { padding-left: 20px; margin-bottom: 12px; }
+ul li { margin-bottom: 6px; }
+ol { padding-left: 20px; margin-bottom: 12px; }
+ol li { margin-bottom: 8px; }
+.callout { border-radius: 8px; padding: 14px 16px; margin: 16px 0; display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; }
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout-body { flex: 1; }
+.callout-body strong { display: block; margin-bottom: 4px; font-size: 13.5px; }
+.callout.tip    { background: var(--tip-bg);    border-left: 3px solid var(--tip-border); }
+.callout.warn   { background: var(--warn-bg);   border-left: 3px solid var(--warn-border); }
+.callout.info   { background: var(--info-bg);   border-left: 3px solid var(--info-border); }
+.callout.danger { background: var(--danger-bg); border-left: 3px solid var(--danger-border); }
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+thead tr { background: #f5f5f5; }
+th { font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid var(--border); color: var(--text-secondary); font-size: 12.5px; }
+td { padding: 9px 14px; border: 1px solid var(--border); }
+tr:hover td { background: #fafafa; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin: 2px; }
+.tag-blue   { background: var(--tag-blue);   color: var(--tag-blue-text); }
+.tag-green  { background: var(--tag-green);  color: var(--tag-green-text); }
+.tag-orange { background: var(--tag-orange); color: var(--tag-orange-text); }
+.tag-pink   { background: var(--tag-pink);   color: var(--tag-pink-text); }
+.tag-purple { background: var(--tag-purple); color: var(--tag-purple-text); }
+.flowchart { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin: 16px 0; padding: 16px; background: #fafafa; border-radius: 8px; border: 1px solid var(--border); }
+.flow-node { background: white; border: 1.5px solid #d0d0d0; border-radius: 6px; padding: 8px 14px; font-size: 13px; text-align: center; min-width: 80px; }
+.flow-node.accent { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 500; }
+.flow-node.green  { border-color: #27a75f; background: #e8f9ef; color: #27a75f; }
+.flow-node.orange { border-color: #d97706; background: #fff4e6; color: #d97706; }
+.flow-node.purple { border-color: #7c3aed; background: #f3eeff; color: #7c3aed; }
+.flow-arrow { color: #bbb; font-size: 18px; line-height: 1; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 16px 0; }
+.card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; transition: box-shadow 0.15s; }
+.card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.card-icon  { font-size: 20px; margin-bottom: 6px; }
+.card-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+.card-desc  { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+.highlight-box { background: linear-gradient(135deg, #1456f0, #4d7bff); border-radius: 10px; padding: 18px 22px; color: white; margin: 16px 0; }
+.highlight-box .title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.highlight-box .body  { font-size: 13.5px; opacity: 0.9; line-height: 1.6; }
+blockquote { border-left: 3px solid var(--border); margin: 16px 0; padding: 10px 16px; color: var(--text-secondary); font-size: 13.5px; background: #fafafa; border-radius: 0 6px 6px 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+.speech-box { background: var(--accent-light); border: 1px solid #c5d8ff; border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 13.5px; }
+.speech-box::before { content: '💼 面试话术'; display: block; font-size: 11.5px; font-weight: 700; color: var(--accent); margin-bottom: 6px; letter-spacing: 0.04em; }
+.glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin: 16px 0; }
+.glossary-item { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.glossary-term { font-size: 13.5px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.glossary-def  { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+.agi-ladder { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+.agi-row { display: flex; align-items: stretch; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+.agi-level { min-width: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; padding: 10px 6px; color: white; }
+.agi-content { flex: 1; padding: 10px 14px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.agi-name { font-weight: 600; min-width: 100px; }
+.agi-desc { color: var(--text-secondary); font-size: 12.5px; }
+.case-box { background: #fafafa; border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin: 16px 0; }
+.case-box .case-title { font-size: 13.5px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.score-scale { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+.score-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; }
+.score-num { font-size: 18px; font-weight: 700; min-width: 28px; text-align: center; }
+.score-label { font-weight: 600; min-width: 70px; }
+.score-desc { color: var(--text-secondary); font-size: 12.5px; }
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="sidebar-title">目录</div>
+  <div class="sidebar-nav">
+    <a href="#s1" class="nav-h1">一、核心职责与角色层级</a>
+    <a href="#s1-1" class="nav-h2">1.1 最核心的职责</a>
+    <a href="#s1-2" class="nav-h2">1.2 职责细分</a>
+    <a href="#s1-3" class="nav-h2">1.3 角色层级体系</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s2" class="nav-h1">二、需求承接</a>
+    <a href="#s2-1" class="nav-h2">2.1 承接流程</a>
+    <a href="#s2-2" class="nav-h2">2.2 需求表单</a>
+    <a href="#s2-3" class="nav-h2">2.3 需求落地</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s3" class="nav-h1">三、规则文档方法论</a>
+    <a href="#s3-1" class="nav-h2">3.1 核心注意事项</a>
+    <a href="#s3-2" class="nav-h2">3.2 图片/视频规则要点</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s4" class="nav-h1">四、质检流程与返修</a>
+    <a href="#s4-1" class="nav-h2">4.1 质检方式</a>
+    <a href="#s4-2" class="nav-h2">4.2 返修机制</a>
+    <a href="#s4-3" class="nav-h2">4.3 质检 vs 标注</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s5" class="nav-h1">五、评测项目管理</a>
+    <a href="#s5-1" class="nav-h2">5.1 评测周期</a>
+    <a href="#s5-2" class="nav-h2">5.2 评测人员培养</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s6" class="nav-h1">六、人员管理</a>
+    <a href="#s6-1" class="nav-h2">6.1 内部人员管理</a>
+    <a href="#s6-2" class="nav-h2">6.2 供应商管理</a>
+    <a href="#s6-3" class="nav-h2">6.3 考核制度</a>
+    <a href="#s6-4" class="nav-h2">6.4 大型团队管理</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s7" class="nav-h1">七、交付文档</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s8" class="nav-h1">八、简历撰写</a>
+    <a href="#s8-1" class="nav-h2">8.1 核心结构</a>
+    <a href="#s8-2" class="nav-h2">8.2 项目描述 STAR 法则</a>
+    <a href="#s8-3" class="nav-h2">8.3 个人优势怎么写</a>
+    <a href="#s8-4" class="nav-h2">8.4 常见问题</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s9" class="nav-h1">九、面试策略</a>
+    <a href="#s9-1" class="nav-h2">9.1 面试流程</a>
+    <a href="#s9-2" class="nav-h2">9.2 三层考察</a>
+    <a href="#s9-3" class="nav-h2">9.3 实战技巧</a>
+    <a href="#s9-4" class="nav-h2">9.4 模拟面试复盘</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s10" class="nav-h1">十、子弹库构建</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s11" class="nav-h1">十一、面试复盘方法</a>
+    <div class="sidebar-divider"></div>
+    <a href="#s12" class="nav-h1">附录：名词速查</a>
+  </div>
+</nav>
+
+<main id="main">
+
+  <div class="doc-header">
+    <div class="doc-date">AI训练师最后一课</div>
+    <div class="doc-meta">
+      <div class="avatar">罗</div>
+      <span>AI训练师培训班</span>
+      <span>·</span>
+      <span>2026-04-12</span>
+    </div>
+    <div class="summary-box">
+      本节课是培训班的最后一节课，系统复盘了 AI 训练师的全流程工作方法论：从角色层级定位、需求承接、规则文档撰写、质检与评测，到人员管理、交付验收；同时深入讲解了简历撰写要点、面试策略（含真实面试录音回放分析）、子弹库构建方法，以及面试复盘的完整 SOP。
+    </div>
+  </div>
+
+  <!-- ==================== 一、核心职责 ==================== -->
+  <section id="s1">
+    <h1>一、核心职责与角色层级</h1>
+
+    <div id="s1-1"></div>
+    <h2>1.1 最核心的职责</h2>
+
+    <div class="highlight-box">
+      <div class="title">🎯 AI 训练师最核心的职责</div>
+      <div class="body">不是「给优质数据」，而是<strong>承接需求，把需求落地</strong>。优质数据只是需求落地的结果——因为算法要用这批数据来微调训练、提升模型能力，才会产生需求。把需求落地做好，已经非常不容易。</div>
+    </div>
+
+    <div id="s1-2"></div>
+    <h2>1.2 职责细分</h2>
+
+    <div class="card-grid">
+      <div class="card" style="border-left:3px solid #1456f0;">
+        <div class="card-icon">📦</div>
+        <div class="card-title">数据构建</div>
+        <div class="card-desc">大厂中少见让你单独构建的情况，中小型公司可能从 0 到 1。特殊情况：原始数据不可获取，需通过模型构造。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #27a75f;">
+        <div class="card-icon">📋</div>
+        <div class="card-title">规则设计</div>
+        <div class="card-desc">根据需求撰写标注规则文档，定义数据维度、评分标准、case 案例，确保标注人员理解一致。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #d97706;">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">质量管理</div>
+        <div class="card-desc">搭建抽检体系（抽检比例、动态调整机制）、返修流程、人员准确率追踪。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #7c3aed;">
+        <div class="card-icon">👥</div>
+        <div class="card-title">人员管理</div>
+        <div class="card-desc">团队组建与培训、分组管理、绩效考核、供应商协同。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #c2185b;">
+        <div class="card-icon">📊</div>
+        <div class="card-title">评测</div>
+        <div class="card-desc">构建评测集、设计评测维度、出评测报告。人工 + 自动结合。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #0d47a1;">
+        <div class="card-icon">🚀</div>
+        <div class="card-title">流程/提效</div>
+        <div class="card-desc">SOP 搭建与优化、自动化脚本、PE 能力、workflow 搭建（如 Coze）。</div>
+      </div>
+    </div>
+
+    <div id="s1-3"></div>
+    <h2>1.3 角色层级体系</h2>
+
+    <div class="agi-ladder">
+      <div class="agi-row">
+        <div class="agi-level" style="background:#c2185b;">L5</div>
+        <div class="agi-content">
+          <div class="agi-name">Owner / 经理</div>
+          <div class="agi-desc">全流程 SOP 优化、多项目并行管控、产研思维反推模型迭代、市场分析与数据采集。4年+经验。</div>
+        </div>
+      </div>
+      <div class="agi-row">
+        <div class="agi-level" style="background:#7c3aed;">L4</div>
+        <div class="agi-content">
+          <div class="agi-name">POC（项目管理）</div>
+          <div class="agi-desc">100% 需求承接 → 规则落地 → 人员管理 → 交付验收。分甲方 POC 和乙方（供应商）POC。</div>
+        </div>
+      </div>
+      <div class="agi-row">
+        <div class="agi-level" style="background:#1456f0;">L3</div>
+        <div class="agi-content">
+          <div class="agi-name">标注 / 质检</div>
+          <div class="agi-desc">标注：执行标注、保障准确率、理解规则。质检：数据敏感度 + bad case 采集 + 人员培训。</div>
+        </div>
+      </div>
+      <div class="agi-row">
+        <div class="agi-level" style="background:#27a75f;">L2</div>
+        <div class="agi-content">
+          <div class="agi-name">实习生</div>
+          <div class="agi-desc">核心是执行 + 准确率 + 理解规则。部分参与 bad case 采集、辅助分配数据。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>甲方 POC vs 供应商 POC</strong>甲方 POC 需求承接来自产品/算法，规则自己制定。供应商 POC 80% 的规则由甲方提供（压缩版），核心工作在于内部人员管理和规则优化落地。供应商对接甲方 POC 或产品，极少直接对接算法。</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 二、需求承接 ==================== -->
+  <section id="s2">
+    <h1>二、需求承接</h1>
+
+    <div id="s2-1"></div>
+    <h2>2.1 承接全流程</h2>
+
+    <div class="flowchart" style="justify-content:center;">
+      <div class="flow-node accent">需求发起<br><small>表单填写</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">前期准备<br><small>规则对齐</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node orange">试标<br><small>验证规则</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">正式标注<br><small>分配+质检</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node green">验收交付<br><small>报告+反馈</small></div>
+    </div>
+
+    <div id="s2-2"></div>
+    <h2>2.2 需求表单核心字段</h2>
+
+    <p>大公司内部一般都有需求表单系统（如飞书），需在发起时填写以下信息：</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>字段</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>发起人 / 负责人</td><td>需求方（算法/产品）+ 数据侧负责人</td></tr>
+          <tr><td>任务名称与说明</td><td>模型名称、训练目标、数据类型</td></tr>
+          <tr><td>数据总量</td><td>具体条数</td></tr>
+          <tr><td>标注起止时间</td><td>开始日期 → Deadline</td></tr>
+          <tr><td>规则文档</td><td>初步规则/参考文档</td></tr>
+          <tr><td>质量要求</td><td>合格率标准（如 ≥90%）</td></tr>
+          <tr><td>交付频次与格式</td><td>每日/每批交付、JSON / CSV 等</td></tr>
+          <tr><td>预算与人效估算</td><td>涉及供应商时需算钱（按条 × 准确率）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="s2-3"></div>
+    <h2>2.3 需求落地的关键步骤</h2>
+
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><strong>需求落地 ≠ 需求承接完就结束</strong>面试中经常有人只讲「怎么接需求」而漏掉「怎么落地」。落地是面试官最关心的环节。</div>
+    </div>
+
+    <div class="flowchart" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node accent" style="min-width:40px;text-align:center;">1</div>
+        <span>拿到需求后先<strong>简单梳理</strong>，写出初步规则文档</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node" style="min-width:40px;text-align:center;">2</div>
+        <span>查看<strong>数据形态</strong>，挑选典型 case 与案例</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node orange" style="min-width:40px;text-align:center;">3</div>
+        <span>自己先<strong>试标</strong>一批数据</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node" style="min-width:40px;text-align:center;">4</div>
+        <span>把试标结果给<strong>需求方验证</strong>，确认是否符合预期</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node green" style="min-width:40px;text-align:center;">5</div>
+        <span>如果达标 → 正式落地；如果有偏差 → 双方<strong>用同一批数据分别标注</strong>，看 gap 在哪，重新制定标准</span>
+      </div>
+    </div>
+
+    <div class="speech-box">
+      「我拿到需求后，会先简单梳理成初步规则文档，然后回扫数据形态，挑典型 case 做试标。试标结果提交给需求方确认——如果达标，说明规则落地了；如果有偏差，我会找同一批数据让双方分别标注，找出分歧点，重新制定标准后再落地。」
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 三、规则文档 ==================== -->
+  <section id="s3">
+    <h1>三、规则文档方法论</h1>
+
+    <div id="s3-1"></div>
+    <h2>3.1 核心注意事项</h2>
+
+    <div class="card-grid">
+      <div class="card" style="border-left:3px solid #1456f0;">
+        <div class="card-icon">🔲</div>
+        <div class="card-title">全面覆盖，无重叠</div>
+        <div class="card-desc">维度要广，能覆盖数据各种类型；各维度之间不能有交叉重叠。MECE 原则。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #27a75f;">
+        <div class="card-icon">📖</div>
+        <div class="card-title">通俗易懂</div>
+        <div class="card-desc">让标注人员能快速理解，避免过于学术化的表述。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #d97706;">
+        <div class="card-icon">📌</div>
+        <div class="card-title">配 Bad Case 案例</div>
+        <div class="card-desc">每个维度至少有正确/错误示范，case 是规则的灵魂。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #c2185b;">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">持续更新迭代</div>
+        <div class="card-desc">规则需要根据作业中发现的新问题及时更新，不是写完就不动了。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #7c3aed;">
+        <div class="card-icon">✅</div>
+        <div class="card-title">可落地性</div>
+        <div class="card-desc">规则必须可操作，标注员拿到就能干活，不能只有抽象概念。</div>
+      </div>
+      <div class="card" style="border-left:3px solid #0d47a1;">
+        <div class="card-icon">📐</div>
+        <div class="card-title">评分维度明确</div>
+        <div class="card-desc">每个分值区间的标准清晰，1分/2分/3分的界线不模糊。</div>
+      </div>
+    </div>
+
+    <div id="s3-2"></div>
+    <h2>3.2 图片/视频项目规则特殊要点</h2>
+
+    <p>图片和视频项目的规则文档，最核心的内容不是文字描述，而是<strong>视觉参考与案例配置</strong>：</p>
+    <ul>
+      <li>光影解释（光质、光亮光位、透光）、构图类型（中心构图、三分构图等），每个概念都要配示例图</li>
+      <li>饱和度区分（低/中/高）需要用对比图片帮助标注员理解</li>
+      <li>风格分类（水彩、儿童、二次元、实拍等）每个风格配典型示例</li>
+      <li>对于美学打分项目，需要将主观审美<strong>解耦为可量化维度</strong>（脸部、身材、服装、发型分别打分）</li>
+    </ul>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>美学项目的特殊难点</strong>美学是主观的，怎么落地？① 前期人员筛选时就把审美差的刷掉；② 周期性开会拉齐认知；③ 人工打分与模型打分做一致性对比，gap 大的拉出来讨论，不断拉齐到 90%+ 一致性——这其实就是 RL 的思路。</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 四、质检 ==================== -->
+  <section id="s4">
+    <h1>四、质检流程与返修</h1>
+
+    <div id="s4-1"></div>
+    <h2>4.1 质检方式</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>方式</th><th>说明</th><th>适用场景</th></tr></thead>
+        <tbody>
+          <tr><td><strong>互检</strong></td><td>标注人员之间交叉检查</td><td>早期人员少、未分出专职质检时</td></tr>
+          <tr><td><strong>当日检</strong></td><td>当天标注 → 当天质检</td><td>项目紧急、质检可能半天标注半天质检</td></tr>
+          <tr><td><strong>次日检</strong></td><td>前一天标注 → 次日质检</td><td>最常见、最合理的节奏</td></tr>
+          <tr><td><strong>二次抽检</strong></td><td>返修后对未抽检部分再抽一轮</td><td>准确率不达标时的补救</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>抽检比例是动态调整的</strong>规则刚更新时，抽检 40% 甚至全检；人员准确率稳定在 95%+ 后，降到 15~20%。面试时要用确定的数据说：「初期 40%，稳定后降到 20%」，不能含糊说「30% 到 40%」。</div>
+    </div>
+
+    <div id="s4-2"></div>
+    <h2>4.2 返修机制</h2>
+
+    <div class="score-scale">
+      <div class="score-row" style="border-color:#27a75f;">
+        <div class="score-num" style="color:#27a75f;">90%+</div>
+        <div class="score-label">合格</div>
+        <div class="score-desc">只修改抽检中标错的条目即可</div>
+      </div>
+      <div class="score-row" style="border-color:#d97706;">
+        <div class="score-num" style="color:#d97706;">70-90%</div>
+        <div class="score-label">部分返修</div>
+        <div class="score-desc">按比例（如 30~50%）打回<strong>未抽检部分</strong>进行返修，返修后二次抽检</div>
+      </div>
+      <div class="score-row" style="border-color:#c0392b;">
+        <div class="score-num" style="color:#c0392b;">&lt;70%</div>
+        <div class="score-label">不合格</div>
+        <div class="score-desc">全部打回重做，或直接舍弃该批次数据</div>
+      </div>
+    </div>
+
+    <p>二次抽检的对象是<strong>之前未抽检的部分</strong>（包含返修后的数据）。如果二次抽检仍不达标，一般就直接舍弃这个人的数据——三次抽检成本太大了。</p>
+
+    <div id="s4-3"></div>
+    <h2>4.3 质检人员 vs 标注人员的区别</h2>
+
+    <p>不只是「准确率更高」，质检人员还需要具备：</p>
+    <ul>
+      <li><strong>数据敏感度</strong>：能从数据中发现共性问题</li>
+      <li><strong>Bad case 分析能力</strong>：主动采集整理典型错误</li>
+      <li><strong>人员培训能力</strong>：发现标注员的薄弱环节并针对性辅导</li>
+      <li><strong>沟通协作能力</strong>：准确率高但不会沟通的人只适合做标注</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><strong>质检人员从哪来？</strong>① 正式标注 3~7 天后，从标注人员中提拔表现好的；② 大公司可能入职时就按职级定岗；③ 质检人员也可以同时做评测任务（评测是周期性的，中间空档质检人员不能闲着）。</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 五、评测 ==================== -->
+  <section id="s5">
+    <h1>五、评测项目管理</h1>
+
+    <div id="s5-1"></div>
+    <h2>5.1 评测周期分类</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>周期</th><th>特点</th></tr></thead>
+        <tbody>
+          <tr><td><strong>当天出报告</strong></td><td>用已有评测集，短平快，当天标完当天出结果</td></tr>
+          <tr><td><strong>3~10 日</strong></td><td>最常见。已有评测集，横向维度较多（评测对象多）</td></tr>
+          <tr><td><strong>10 日以上</strong></td><td>从零构建评测集 + 评测作业设计 + 标注 + 出报告</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>现在模型迭代极快，10天内可能就出新版本，所以大多数评测是<strong>短平快的 3~6 天</strong>。</p>
+
+    <div id="s5-2"></div>
+    <h2>5.2 评测人员的培养</h2>
+
+    <p>评测人员需要<strong>长期稳定培养</strong>，不能每次临时拉人。尤其是美学类的专项评测，需要标准文档 → 试标 → 拉齐地铁值（审美一致性），这是一个「软性培养」过程，周期很长。</p>
+
+    <div class="speech-box">
+      「我手下会有稳定的评测专业团队。评测是周期性任务，比如一个月做一回，中间空档他们就做质检。需要评测时，我直接让他们上手评，评完我出报告。不需要每次重新培训。」
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 六、人员管理 ==================== -->
+  <section id="s6">
+    <h1>六、人员管理</h1>
+
+    <div id="s6-1"></div>
+    <h2>6.1 内部人员管理维度</h2>
+
+    <p>人员管理从两个核心维度考核：<strong>准确率</strong> + <strong>完成率</strong>。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>完成率指标</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>日完成量 / 日分配量</td><td>低于 90% 给黄牌</td></tr>
+          <tr><td>跳过率</td><td>跳过数 / 分配数 ≥ 10% 给黄牌（防止偷懒跳难题）</td></tr>
+          <tr><td>质检跳过率</td><td>累计跳过质检数据 ≥ 20% 给黄牌</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="s6-2"></div>
+    <h2>6.2 供应商管理</h2>
+
+    <p>供应商管理的重点在于<strong>人员管理</strong>。供应商的人比较杂、能力参差不齐。</p>
+
+    <ul>
+      <li>供应商按<strong>计件计酬</strong>（按条算钱），标注和质检价格不同</li>
+      <li>分批分配数据（如每次 60 条），做完报告后再分下一批，不要一次全分</li>
+      <li>基准线如 200 条/天，低于 100 条/天的人力直接淘汰（太分散，管理成本大于价值）</li>
+      <li>可找 2~3 家供应商<strong>竞标对比</strong>质量</li>
+      <li>奖惩机制用<strong>百分比</strong>而非固定金额（如准确率 95%+ 奖 10%，低于 90% 扣 10%）</li>
+    </ul>
+
+    <div id="s6-3"></div>
+    <h2>6.3 考核制度（五档）</h2>
+
+    <div class="score-scale">
+      <div class="score-row" style="border-color:#27a75f;">
+        <div class="score-num" style="color:#27a75f;">⭐</div>
+        <div class="score-label">优秀</div>
+        <div class="score-desc">完成任务 + 准确率 95%+。基础薪资 + 奖励</div>
+      </div>
+      <div class="score-row" style="border-color:#1456f0;">
+        <div class="score-num" style="color:#1456f0;">✓</div>
+        <div class="score-label">合格</div>
+        <div class="score-desc">准确率 85%+ 达到合格标准</div>
+      </div>
+      <div class="score-row" style="border-color:#d97706;">
+        <div class="score-num" style="color:#d97706;">✗</div>
+        <div class="score-label">不合格</div>
+        <div class="score-desc">准确率 85% 以下，当天数据返修</div>
+      </div>
+      <div class="score-row" style="border-color:#e6a23c;">
+        <div class="score-num" style="color:#e6a23c;">🟡</div>
+        <div class="score-label">黄牌</div>
+        <div class="score-desc">完成率不达标 / 异常跳过率 / 累计不合格</div>
+      </div>
+      <div class="score-row" style="border-color:#c0392b;">
+        <div class="score-num" style="color:#c0392b;">🔴</div>
+        <div class="score-label">红牌</div>
+        <div class="score-desc">已有黄牌 + 持续表现差 / 态度恶劣 / 不回复消息。无薪</div>
+      </div>
+    </div>
+
+    <div id="s6-4"></div>
+    <h2>6.4 大型团队管理（百人级）</h2>
+
+    <p>百人团队最大的问题：<strong>信息失真</strong>，很难每个人都顾及到。</p>
+
+    <ul>
+      <li><strong>分组管理</strong>：质检人员每人带一批组员，负责定向培训和跟踪准确率</li>
+      <li>数据量和准确率要求必须<strong>非常明确</strong>，不能因个别人而松动标准</li>
+      <li>提拔不上来的人果断舍弃，不要浪费人力资源</li>
+      <li>预防<strong>高频次人员流动</strong>：毕业季前提前储备，规定离职需提前 15 天~1 个月通知</li>
+      <li>遇到缺人先<strong>内部调配</strong>（从其他组借调），解决不了再找领导</li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 七、交付文档 ==================== -->
+  <section id="s7">
+    <h1>七、交付文档</h1>
+
+    <p>交付文档（One 配置文档）是项目的最终产出，包含以下内容：</p>
+
+    <div class="card-grid">
+      <div class="card" style="border-left:3px solid #1456f0;">
+        <div class="card-title">📅 项目背景</div>
+        <div class="card-desc">周期、时长、需求方、参与人员</div>
+      </div>
+      <div class="card" style="border-left:3px solid #27a75f;">
+        <div class="card-title">📋 规则文档</div>
+        <div class="card-desc">相关规则文档链接</div>
+      </div>
+      <div class="card" style="border-left:3px solid #d97706;">
+        <div class="card-title">📊 作业数据</div>
+        <div class="card-desc">人员每日数据量、准确率</div>
+      </div>
+      <div class="card" style="border-left:3px solid #7c3aed;">
+        <div class="card-title">💰 费用结算</div>
+        <div class="card-desc">涉及供应商时的报账</div>
+      </div>
+      <div class="card" style="border-left:3px solid #c2185b;">
+        <div class="card-title">🐛 Bad Case 分析</div>
+        <div class="card-desc">作业中发现的典型问题</div>
+      </div>
+      <div class="card" style="border-left:3px solid #0d47a1;">
+        <div class="card-title">🔧 优化建议</div>
+        <div class="card-desc">提效方案、产品迭代建议、复盘总结</div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 八、简历 ==================== -->
+  <section id="s8">
+    <h1>八、简历撰写</h1>
+
+    <div id="s8-1"></div>
+    <h2>8.1 核心结构</h2>
+
+    <div class="callout danger">
+      <div class="callout-icon">🚫</div>
+      <div class="callout-body"><strong>简历常见问题</strong>① 加粗太多、密密麻麻全是字；② 专业术语堆砌但说不清楚项目干什么；③ 数据夸张离谱（效率提升三倍、下降 60%）；④ 东一榔头西一榔头没有故事感。</div>
+    </div>
+
+    <p>简历核心要让 HR 和面试官一眼看出：</p>
+    <ul>
+      <li><strong>HR 看关键词</strong>：项目管理、人员管理、PE 能力、AI 方向 → 过了就扔进面试池</li>
+      <li><strong>面试官看项目</strong>：是否清晰可表述？中间有没有提效的亮点？能不能展现优势？</li>
+    </ul>
+
+    <div id="s8-2"></div>
+    <h2>8.2 项目描述用 STAR 法则</h2>
+
+    <div class="flowchart" style="justify-content:center;">
+      <div class="flow-node accent">S 背景<br><small>项目背景与需求</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">T 任务<br><small>你承接了什么</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node orange">A 行动<br><small>规则+落地+卡点+解决</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node green">R 成果<br><small>量化数据结果</small></div>
+    </div>
+
+    <p>每个项目要有<strong>侧重点</strong>，不是每个项目都写全流程，而是突出核心贡献：</p>
+    <ul>
+      <li>项目 A 侧重<strong>人员管理能力</strong></li>
+      <li>项目 B 侧重<strong>评测报告 + 交付能力</strong></li>
+      <li>项目 C 侧重<strong>规则文档撰写能力</strong></li>
+      <li>项目 D 侧重<strong>提效/自动化贡献</strong></li>
+    </ul>
+
+    <div id="s8-3"></div>
+    <h2>8.3 个人优势怎么写</h2>
+
+    <p>从真实的 JD 中提取关键词，结合自身经历改写：</p>
+    <ul>
+      <li>AI 数据标注 + 大模型运营管理 + 内容质量把控经验</li>
+      <li>人机混合标注工作流经验（= 自动化 + 人工校验）</li>
+      <li>跨职能协作 + BPO/供应商管理经验</li>
+      <li>自动化工作流搭建能力（具体到成效）</li>
+      <li>PE（Prompt Engineering）能力 → 写成 Prompt Engineer</li>
+      <li>评测标准与评测集独立构建能力</li>
+      <li>多项目并行管理能力</li>
+    </ul>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>专业名词能写但要能讲清楚</strong>简历上写的任何专业名词，面试官问「这是什么意思」时，你要能立马解释得特别清楚。说不清楚就别写上去。</div>
+    </div>
+
+    <div id="s8-4"></div>
+    <h2>8.4 数据要有理有据</h2>
+
+    <p>简历上的数据（如「效率提升 X%」「准确率提升 X 个点」）一定要是自己能讲出逻辑的。面试官对数字非常敏感，随便写一个讲不清楚就暴露了。</p>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 九、面试策略 ==================== -->
+  <section id="s9">
+    <h1>九、面试策略</h1>
+
+    <div id="s9-1"></div>
+    <h2>9.1 面试流程与时长</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>轮次</th><th>面试官</th><th>内容比例</th></tr></thead>
+        <tbody>
+          <tr><td><strong>一面</strong></td><td>平行面（直属 leader）</td><td>80% 项目 + 20% 个人/AI 前瞻性</td></tr>
+          <tr><td><strong>二面</strong></td><td>加一面（leader 的 leader）</td><td>40~50% 项目 + 50% 自动化/提效/行业认知</td></tr>
+          <tr><td><strong>三面</strong></td><td>交叉面</td><td>综合考察</td></tr>
+          <tr><td><strong>终面</strong></td><td>HR / HRBP</td><td>HR 看方向匹配；HRBP 可能问业务细节</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>大厂面试一般 40 分钟起步。聊得好可以到 1 小时。</p>
+
+    <div id="s9-2"></div>
+    <h2>9.2 面试官的三层考察</h2>
+
+    <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="card" style="border-left:3px solid #1456f0;">
+        <div class="card-title">🔭 宏观层</div>
+        <div class="card-desc">项目全流程是什么？你的角色是什么？怎么解决问题的？</div>
+      </div>
+      <div class="card" style="border-left:3px solid #d97706;">
+        <div class="card-title">🔬 微观层</div>
+        <div class="card-desc">某个环节的细节：bad case 怎么处理？数据案例长什么样？</div>
+      </div>
+      <div class="card" style="border-left:3px solid #7c3aed;">
+        <div class="card-title">💎 本质层</div>
+        <div class="card-desc">你的方法论是什么？能不能迁移到其他项目？如果重新做会怎么做？</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="background:linear-gradient(135deg, #7c3aed, #a78bfa);">
+      <div class="title">🎯 面试官最终要看到的</div>
+      <div class="body">你不只是执行者，而是有自己的思考和方法论沉淀。你能发现问题、解决问题、持续迭代。自动化就是一个特别好的方法论沉淀的体现。</div>
+    </div>
+
+    <div id="s9-3"></div>
+    <h2>9.3 实战技巧</h2>
+
+    <h3>表述技巧</h3>
+    <ul>
+      <li><strong>总分总</strong>：先给结论，再展开，最后总结回扣</li>
+      <li><strong>停顿思考</strong>：面试官问完后，停 1~2 秒，过一下他的问题，想清楚答几个点再答</li>
+      <li><strong>结论前置</strong>：前面和最后一句话印象最深</li>
+      <li><strong>讲偏了就拉回来</strong>：意识到自己赘述了，加一个总结性话术收回来</li>
+      <li><strong>语速别太快</strong>：慢一点，让面试官跟上你的思路</li>
+    </ul>
+
+    <h3>高级技巧</h3>
+    <ul>
+      <li><strong>留钩子</strong>：「其实这背后的核心问题是 XX，后来我发现了更好的做法，这个经验也用到了其他项目」→ 引导面试官追问你擅长的领域</li>
+      <li><strong>主动引导</strong>：把话题引到自己最擅长的方向（如自动化、PE 能力），尤其在二面更重要</li>
+      <li><strong>不会的问题</strong>：「我之前确实没有实操过，但基于 XX 经验，我认为应该 XX」</li>
+      <li><strong>听不懂的问题</strong>：可以反问确认「您所指的是 XX 方向吗？」不要硬答</li>
+    </ul>
+
+    <div class="speech-box">
+      「之所以这样设计规则维度，是因为我们发现 XX 问题（留钩子）。其实在这个项目中我还落地了一套自动化方案（引导到擅长领域），通过 Coze workflow 实现了半自动化的数据构造，初期虽然是半人工的，但这是把模型能力引入标注流程的开端。」
+    </div>
+
+    <div id="s9-4"></div>
+    <h2>9.4 模拟面试实战要点</h2>
+
+    <p>课上进行了模拟面试，暴露出几个典型问题：</p>
+
+    <div class="case-box">
+      <div class="case-title">📝 模拟面试问题复盘</div>
+      <p><strong>问：你怎么构建自己的方法论，怎么把需求更好地落地？</strong></p>
+      <p>典型错误：只讲了前期需求对齐（背景、时间、数据量），但漏掉了<strong>落地环节</strong>——怎么试标、怎么验证规则、怎么确认符合需求方预期。</p>
+      <p><strong>问：0 到 1 梳理标注标准的思路？</strong></p>
+      <p>如果讲不好结构化的回答，可以<strong>用一个实际案例代替</strong>：「这个项目就是我当时从 0 到 1 承接的，我当时的做法是……」</p>
+      <p><strong>问：数据的理想态和标准你做了什么工作？</strong></p>
+      <p>核心答：规则落地 + 标注过程中问题解决 + 与需求方持续协同校准标准。</p>
+    </div>
+
+    <div class="callout danger">
+      <div class="callout-icon">🚫</div>
+      <div class="callout-body"><strong>面试大忌</strong>① 背书式回答、泛泛而谈；② 夸大角色（说不清细节就暴露了）；③ 不懂装懂；④ 绕来绕去没有核心重点；⑤ 面试官问 SFT 你说只准备了评测项目 → 直接挂。</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 十、子弹库 ==================== -->
+  <section id="s10">
+    <h1>十、子弹库构建</h1>
+
+    <p>子弹库是你面试的「弹药库」，分两个层级：</p>
+
+    <h3>简单版（基础好的人）</h3>
+    <p>把之前已有的项目填充表整理下来，能够自然地讲清每个项目的全流程即可。面试时可以放在屏幕旁边（线上面试），但不要戴眼镜后目光明显偏移。</p>
+
+    <h3>详细版（讲不清楚的人）</h3>
+    <p>必须做到以下程度：</p>
+    <ol>
+      <li>每个项目写出<strong>详细的规则文档</strong>——不是 AI 生成后放着，而是自己一字一字写/过一遍</li>
+      <li>准备<strong>实际数据样例</strong>：原始数据长什么样、标注后长什么样？涵盖不同类别（合格/不合格/舍弃/跳过），每类至少 2~3 条</li>
+      <li>评测类项目自己实打实做 20~50 条，涵盖不同分值的 case</li>
+      <li>把项目讲给非行业的人听（对象/弟弟妹妹/爸妈），他们听得懂就说明你讲清楚了</li>
+    </ol>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>子弹库核心内容</strong>自我介绍、每个项目的（背景 → 规则维度 → 流程卡点与解决方案 → 结果数据）、团队规模与分工、公司名/模型名/产品名、数据规模与每日分配量。</div>
+    </div>
+
+    <div class="highlight-box" style="background:linear-gradient(135deg, #27a75f, #34d399);">
+      <div class="title">🧠 AI 是你的外置大脑，不是你的替身</div>
+      <div class="body">用 AI 辅助梳理没问题，但最终要自己过一遍脑子、手写下来。AI 生产的知识过一遍脑子再写下来，这才是你自己的。面试时磕磕巴巴就说明这个东西还不是你的。</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 十一、面试复盘 ==================== -->
+  <section id="s11">
+    <h1>十一、面试复盘方法</h1>
+
+    <p>每次面试后（不管过没过）都要做复盘，格式参考：</p>
+
+    <div class="flowchart" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node accent" style="min-width:40px;text-align:center;">1</div>
+        <span><strong>基本信息</strong>：岗位、简历链接、录音逐字稿</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node" style="min-width:40px;text-align:center;">2</div>
+        <span><strong>面试官核心问题</strong>：列出 1234 问了什么</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node orange" style="min-width:40px;text-align:center;">3</div>
+        <span><strong>回答不足的地方</strong>：哪些没答好？核心考察点是什么？</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node" style="min-width:40px;text-align:center;">4</div>
+        <span><strong>改良版回答</strong>：把答案优化成「满分答案」</span>
+      </div>
+      <div style="color:#bbb;padding-left:20px;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="flow-node green" style="min-width:40px;text-align:center;">5</div>
+        <span><strong>下一轮改进策略</strong>：需要弥补什么知识点？调研什么材料？</span>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><strong>面试就是不断发现问题、解决问题</strong>前期广投广撒网，每天投上限，不管大小面试都去面。面完回来复盘、总结问题、优化答案。答不上来的问题太好了——把它变成满分答案，下次再遇到同类问题就不会出错。要么学到（经验），要么拿到（offer）。</div>
+    </div>
+
+    <h3>每日习惯</h3>
+    <ul>
+      <li>每天至少刷<strong>一篇 AI 相关文章/视频</strong>，记 1~2 个观点，面试时找机会表达出来</li>
+      <li>面试前<strong>搜一下对方公司/产品的最新动态</strong>，比如生图模型的评测、竞品对比</li>
+      <li>同学之间互相<strong>模拟面试</strong>，从面试官视角发现对方的问题</li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <!-- ==================== 附录 ==================== -->
+  <section id="s12">
+    <h1>附录：名词速查</h1>
+
+    <div class="glossary-grid">
+      <div class="glossary-item">
+        <div class="glossary-term">POC</div>
+        <div class="glossary-def">Point of Contact，项目管理角色，负责需求承接到交付的全流程</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Owner</div>
+        <div class="glossary-def">项目 Owner，管理多个 POC、负责全流程 SOP 优化和多项目并行</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">BPO</div>
+        <div class="glossary-def">Business Process Outsourcing，业务流程外包，即供应商管理</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">STAR 法则</div>
+        <div class="glossary-def">Situation（背景）→ Task（任务）→ Action（行动）→ Result（结果），项目描述框架</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">SFT</div>
+        <div class="glossary-def">Supervised Fine-Tuning，监督微调，用标注数据训练模型</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">RL / RLHF</div>
+        <div class="glossary-def">Reinforcement Learning (from Human Feedback)，强化学习（基于人类反馈）</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">PE</div>
+        <div class="glossary-def">Prompt Engineering，提示词工程</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">LoRA</div>
+        <div class="glossary-def">Low-Rank Adaptation，低秩适配微调，小模型微调方案</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Caption</div>
+        <div class="glossary-def">图片/视频的描述标注，结构化描述画面内容</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">One 配置文档</div>
+        <div class="glossary-def">交付文档的内部叫法，包含项目全生命周期信息</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">子弹库</div>
+        <div class="glossary-def">面试准备的知识弹药库，包含自我介绍、项目详情、规则文档、case 数据等</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">地铁值</div>
+        <div class="glossary-def">评测中人与人/人与模型之间的评分一致性指标</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">解耦</div>
+        <div class="glossary-def">将复杂的主观概念拆解为多个可量化维度分别评判</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Control Net</div>
+        <div class="glossary-def">Stable Diffusion 的控制网络，用于人物关节/骨骼的姿态控制</div>
+      </div>
+    </div>
+  </section>
+
+  <div style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:60px;padding-top:20px;border-top:1px solid var(--border);">
+    📅 整理时间：2026年4月12日 · 基于课程录音转写整理
+  </div>
+
+</main>
+
+<script>
+  const navLinks = document.querySelectorAll('#sidebar a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + entry.target.id) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
