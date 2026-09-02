@@ -543,6 +543,28 @@ $$RRF\\_Score(d \\in D) = \\sum_{m \\in M} \\frac{1}{k + r_m(d)}$$
 
   // 每日 AI 行业脉冲 (Daily AI News Stream)
     dailyPulse: [    {
+      id: 'pulse-auto-1788315569-1',
+      title: "OpenAI 领袖 Sam Altman 宣布新一代 GPT-5 基础设施部署完成",
+      category: "OpenAI 突破",
+      date: "2026-09-02",
+      aiSummary: "1. 新算力集群推理延迟大幅降低 65%\\n2. 引入全模态视觉与长思考链 (Chain-of-Thought) 原生支持\\n3. 全面支持 Agent 级自主任务拆解",
+      personalInsight: "意味着 Agent 落地中的推理耗时瓶颈将被突破，非常有利于长流程自动化项目的商业推广。",
+      status: "approved",
+      relatedPlanetId: "node-agent-multi",
+      impactScore: "9.9 / 10"
+    },
+    {
+      id: 'pulse-auto-1788315569-2',
+      title: "DeepSeek 发布最新模型微调指南：支持零损失 4-bit 量化对齐",
+      category: "模型开源",
+      date: "2026-09-02",
+      aiSummary: "1. 极大降低开源大模型 SFT 与 DPO 微调门槛\\n2. 单张 RTX 4090 显卡即可运行百亿参数模型训练\\n3. 官方提供全套自动评测 Benchmark",
+      personalInsight: "为我们的 AI 训练师体系提供了极佳的低成本实操练习基座。",
+      status: "approved",
+      relatedPlanetId: "node-trainer-stage2",
+      impactScore: "9.6 / 10"
+    },
+    {
       id: 'pulse-auto-1788231548-1',
       title: "OpenAI 领袖 Sam Altman 宣布新一代 GPT-5 基础设施部署完成",
       category: "OpenAI 突破",
